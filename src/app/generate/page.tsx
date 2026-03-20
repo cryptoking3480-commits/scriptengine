@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { toast } from 'sonner';
 import { Loader2, Sparkles, Instagram, Youtube, Music, Facebook, Linkedin, Twitter, Camera } from 'lucide-react';
+import { saveScript } from '@/lib/storage';
 
 interface ScriptOutput {
   id: number;
@@ -130,6 +131,14 @@ export default function GeneratePage() {
       }
 
       setScripts(data.scripts);
+      saveScript({
+        niche: finalNiche,
+        platform: selectedPlatforms[0],
+        topic,
+        videoLength,
+        imageDesc: imageDesc || null,
+        outputs: JSON.stringify(data.scripts),
+      });
       toast.success('Generated 5 scripts successfully!');
     } catch (error) {
       console.error('Error generating scripts:', error);

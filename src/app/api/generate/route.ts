@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { generateScripts, GenerateParams } from '@/lib/generator';
-import { saveScript } from '@/lib/storage';
 
 export async function POST(request: NextRequest) {
   try {
@@ -14,7 +13,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // API key comes ONLY from server-side .env.local — never from frontend
+    // API key comes ONLY from server-side .env — never from frontend
     const apiKey = process.env.OPENAI_API_KEY;
     if (!apiKey) {
       return NextResponse.json(
@@ -34,9 +33,7 @@ export async function POST(request: NextRequest) {
 
     const scripts = await generateScripts(params, apiKey);
 
-    // Save to history (localStorage)
-    saveScript({ niche, platform, topic, videoLength, imageDesc: imageDesc || null, outputs: JSON.stringify(scripts) });
-
+    // Note: History saving is handled client-side via the return
     return NextResponse.json({ success: true, scripts });
   } catch (error) {
     console.error('Error in generate API:', error);
