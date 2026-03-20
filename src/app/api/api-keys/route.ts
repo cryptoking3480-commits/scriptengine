@@ -1,15 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
-import db from '@/lib/db';
+import { getApiKeys, saveApiKey } from '@/lib/storage';
 import crypto from 'crypto';
 
 export async function GET() {
   try {
-    const keys = db.prepare(`
-      SELECT id, key, label, createdAt, lastUsed, requestCount, active
-      FROM api_keys
-      ORDER BY createdAt DESC
-    `).all();
-
+    const keys = getApiKeys();
     return NextResponse.json({ keys });
   } catch (error) {
     console.error('Error fetching API keys:', error);
@@ -33,11 +28,7 @@ export async function POST(request: NextRequest) {
     }
 
     const apiKey = `sk_${crypto.randomBytes(24).toString('hex')}`;
-
-    db.prepare(`
-      INSERT INTO api_keys (key, label, requestCount, active)
-      VALUES (?, ?, 0, 1)
-    `).run(apiKey, label);
+    saveApiKey({ key: apiKey, label });
 
     return NextResponse.json({ success: true, key: apiKey });
   } catch (error) {

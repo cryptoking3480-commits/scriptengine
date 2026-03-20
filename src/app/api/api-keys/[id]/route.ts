@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import db from '@/lib/db';
+import { deleteApiKey } from '@/lib/storage';
 
 export async function DELETE(
   request: NextRequest,
@@ -7,9 +7,7 @@ export async function DELETE(
 ) {
   try {
     const { id } = await params;
-
-    db.prepare('UPDATE api_keys SET active = 0 WHERE id = ?').run(id);
-
+    deleteApiKey(id);
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error('Error revoking API key:', error);

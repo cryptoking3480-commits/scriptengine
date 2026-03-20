@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import db from '@/lib/db';
 import { generateDeeperScript, ScriptOutput } from '@/lib/generator';
+import { getSettings } from '@/lib/storage';
 
 export async function POST(request: NextRequest) {
   try {
@@ -15,8 +15,12 @@ export async function POST(request: NextRequest) {
     }
 
     // Check for API key in settings
-    const settings = db.prepare('SELECT openai_api_key FROM settings WHERE id = 1').get() as { openai_api_key: string | null };
-    if (!settings?.openai_api_key || settings.openai_api_key === 'user_will_add_this') {
+    const settings = getSettings();
+    const envKey = process.env.OPENAI_API_KEY;
+    const storedKey = settings?.openai_api_key;
+
+    const apiKey = envKey || storedKey;
+    if (!apiKey || apiKey === 'user_will_add_this') {
       return NextResponse.json(
         { error: 'OpenAI API key not configured. Add it in Settings.' },
         { status: 400 }
@@ -24,7 +28,7 @@ export async function POST(request: NextRequest) {
     }
 
     const scriptObj = JSON.parse(script) as ScriptOutput;
-    const production = await generateDeeperScript(niche, platform, topic, videoLength, scriptObj);
+    const production = await generateDeeperScript(niche, platform, topic, videoLength, scriptObj, apiKey);
 
     return NextResponse.json({ success: true, production: JSON.parse(production) });
   } catch (error) {

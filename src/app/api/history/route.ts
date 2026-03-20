@@ -1,5 +1,18 @@
 import { NextRequest, NextResponse } from 'next/server';
-import db from '@/lib/db';
+import { getScripts, deleteScript } from '@/lib/storage';
+
+export async function GET() {
+  try {
+    const scripts = getScripts();
+    return NextResponse.json({ scripts });
+  } catch (error) {
+    console.error('Error fetching history:', error);
+    return NextResponse.json(
+      { error: 'Failed to fetch history' },
+      { status: 500 }
+    );
+  }
+}
 
 export async function DELETE(request: NextRequest) {
   try {
@@ -13,8 +26,7 @@ export async function DELETE(request: NextRequest) {
       );
     }
 
-    db.prepare('DELETE FROM scripts WHERE id = ?').run(id);
-
+    deleteScript(id);
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error('Error deleting script:', error);

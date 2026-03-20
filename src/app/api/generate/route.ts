@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import db from '@/lib/db';
 import { generateScripts, GenerateParams } from '@/lib/generator';
+import { getSettings, saveScript } from '@/lib/storage';
 
 export async function POST(request: NextRequest) {
   try {
@@ -14,17 +14,12 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Check for API key in settings (database) or env
-    const settings = db.prepare('SELECT openai_api_key FROM settings WHERE id = 1').get() as { openai_api_key: string | null };
+    // Check for API key in localStorage or env
+    const settings = getSettings();
     const envKey = process.env.OPENAI_API_KEY;
-    const dbKey = settings?.openai_api_key;
+    const storedKey = settings?.openai_api_key;
 
-    console.log('=== API KEY CHECK ===');
-    console.log('ENV key exists:', !!envKey, envKey ? `starts with: ${envKey.substring(0, 15)}...` : '');
-    console.log('DB key exists:', !!dbKey, dbKey ? `starts with: ${dbKey.substring(0, 15)}...` : '');
-    console.log('DB key value:', dbKey);
-
-    const apiKey = envKey || dbKey;
+    const apiKey = envKey || storedKey;
     if (!apiKey || apiKey === 'user_will_add_this') {
       return NextResponse.json(
         { error: 'OpenAI API key not configured. Add it in Settings.' },
@@ -41,15 +36,10 @@ export async function POST(request: NextRequest) {
       imageDesc,
     };
 
-    console.log('Calling generateScripts with API key:', apiKey.substring(0, 10) + '...');
     const scripts = await generateScripts(params, apiKey);
 
-    // Save to database
-    const insert = db.prepare(`
-      INSERT INTO scripts (niche, platform, topic, videoLength, imageDesc, outputs)
-      VALUES (?, ?, ?, ?, ?, ?)
-    `);
-    insert.run(niche, platform, topic, videoLength, imageDesc || null, JSON.stringify(scripts));
+    // Save to history (localStorage)
+    saveScript({ niche, platform, topic, videoLength, imageDesc: imageDesc || null, outputs: JSON.stringify(scripts) });
 
     return NextResponse.json({ success: true, scripts });
   } catch (error) {
