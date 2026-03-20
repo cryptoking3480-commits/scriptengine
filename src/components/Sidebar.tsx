@@ -2,13 +2,12 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Zap, History, Key, Settings, Menu, X } from 'lucide-react';
+import { Zap, History, Settings, Menu, X } from 'lucide-react';
 import { useState } from 'react';
 
 const navItems = [
   { href: '/generate', label: 'Generate', icon: Zap },
   { href: '/history', label: 'History', icon: History },
-  { href: '/api-access', label: 'API', icon: Key },
   { href: '/settings', label: 'Settings', icon: Settings },
 ];
 
