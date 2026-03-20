@@ -180,10 +180,10 @@ export default function GeneratePage() {
   const isApiKeyMissing = !settings?.openai_api_key || settings.openai_api_key === '❌ Missing';
 
   return (
-    <div className="p-8 max-w-3xl mx-auto">
+    <div className="p-4 sm:p-6 md:p-8 max-w-3xl mx-auto">
       {isApiKeyMissing && (
-        <div className="bg-yellow-500/10 border border-yellow-500/20 rounded-lg p-4 mb-6 flex items-center gap-3">
-          <div className="text-yellow-500">⚠️</div>
+        <div className="bg-yellow-500/10 border border-yellow-500/20 rounded-lg p-4 mb-6 flex items-start gap-3">
+          <div className="text-yellow-500 shrink-0">⚠️</div>
           <p className="text-sm">
             Add your OpenAI API key in{' '}
             <span
@@ -197,14 +197,14 @@ export default function GeneratePage() {
         </div>
       )}
 
-      <h1 className="text-2xl font-bold mb-2">Generate Scripts</h1>
-      <p className="text-[#737373] mb-8">Create viral video scripts in seconds</p>
+      <h1 className="text-xl sm:text-2xl font-bold mb-1">Generate Scripts</h1>
+      <p className="text-[#737373] text-sm mb-6 sm:mb-8">Create viral video scripts in seconds</p>
 
-      <div className="space-y-8">
+      <div className="space-y-6 sm:space-y-8">
         {/* Platform Selection */}
         <section>
-          <h2 className="text-sm font-medium text-[#a3a3a3] mb-3">SELECT PLATFORM</h2>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+          <h2 className="text-xs sm:text-sm font-medium text-[#a3a3a3] mb-3">SELECT PLATFORM</h2>
+          <div className="grid grid-cols-3 sm:grid-cols-4 gap-2 sm:gap-3">
             {platforms.map((platform) => {
               const Icon = platform.icon;
               const isSelected = selectedPlatforms.includes(platform.value);
@@ -212,14 +212,14 @@ export default function GeneratePage() {
                 <button
                   key={platform.value}
                   onClick={() => togglePlatform(platform.value)}
-                  className={`p-4 rounded-lg border transition-all flex flex-col items-center gap-2 ${
+                  className={`p-2 sm:p-3 md:p-4 rounded-lg border transition-all flex flex-col items-center gap-1 sm:gap-2 ${
                     isSelected
                       ? 'bg-[#22c55e]/10 border-[#22c55e] text-[#22c55e]'
                       : 'bg-black border-[#262626] hover:border-[#404040]'
                   }`}
                 >
-                  <Icon size={20} />
-                  <span className="text-xs font-medium">{platform.label}</span>
+                  <Icon size={16} className="sm:w-[20px] sm:h-[20px]" />
+                  <span className="text-[10px] sm:text-xs font-medium leading-tight">{platform.label}</span>
                 </button>
               );
             })}
@@ -228,7 +228,7 @@ export default function GeneratePage() {
 
         {/* Niche Selection */}
         <section>
-          <h2 className="text-sm font-medium text-[#a3a3a3] mb-3">SELECT NICHE</h2>
+          <h2 className="text-xs sm:text-sm font-medium text-[#a3a3a3] mb-3">SELECT NICHE</h2>
           <div className="space-y-3">
             <select
               value={useCustomNiche ? 'custom' : niche}
@@ -240,7 +240,7 @@ export default function GeneratePage() {
                   setNiche(e.target.value);
                 }
               }}
-              className="w-full px-4 py-3 rounded-lg bg-black border border-[#262626] outline-none transition-colors"
+              className="w-full px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg bg-black border border-[#262626] outline-none transition-colors text-sm"
             >
               {niches.map((n) => (
                 <option key={n} value={n}>{n}</option>
@@ -254,7 +254,7 @@ export default function GeneratePage() {
                 value={customNiche}
                 onChange={(e) => setCustomNiche(e.target.value)}
                 placeholder="Enter your custom niche..."
-                className="w-full px-4 py-3 rounded-lg bg-black border border-[#262626] outline-none transition-colors"
+                className="w-full px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg bg-black border border-[#262626] outline-none transition-colors text-sm"
               />
             )}
           </div>
@@ -262,42 +262,42 @@ export default function GeneratePage() {
 
         {/* Video Topic */}
         <section>
-          <h2 className="text-sm font-medium text-[#a3a3a3] mb-3">WHAT IS YOUR VIDEO ABOUT?</h2>
+          <h2 className="text-xs sm:text-sm font-medium text-[#a3a3a3] mb-3">WHAT IS YOUR VIDEO ABOUT?</h2>
           <textarea
             value={topic}
             onChange={(e) => setTopic(e.target.value)}
-            placeholder="e.g. A sunscreen cream that works for Indian skin, or a 10-minute home workout for busy moms..."
-            className="w-full px-4 py-3 rounded-lg bg-black border border-[#262626] outline-none transition-colors h-32 resize-none"
+            placeholder="e.g. A sunscreen cream that works for Indian skin..."
+            className="w-full px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg bg-black border border-[#262626] outline-none transition-colors h-24 sm:h-32 resize-none text-sm"
           />
         </section>
 
         {/* Image Upload (Optional) */}
         <section>
-          <h2 className="text-sm font-medium text-[#a3a3a3] mb-3">UPLOAD IMAGE (OPTIONAL)</h2>
-          <div className="border-2 border-dashed border-[#262626] rounded-lg p-8 text-center hover:border-[#404040] transition-colors cursor-pointer">
-            <Camera className="mx-auto text-[#525252] mb-3" size={32} />
-            <p className="text-sm text-[#737373]">
-              Drag & drop product/service image for better script (optional)
+          <h2 className="text-xs sm:text-sm font-medium text-[#a3a3a3] mb-3">UPLOAD IMAGE (OPTIONAL)</h2>
+          <div className="border-2 border-dashed border-[#262626] rounded-lg p-4 sm:p-8 text-center hover:border-[#404040] transition-colors">
+            <Camera className="mx-auto text-[#525252] mb-2 sm:mb-3" size={24} className="sm:w-8 sm:h-8" />
+            <p className="text-xs sm:text-sm text-[#737373]">
+              Describe product/service for better script (optional)
             </p>
             <input
               type="text"
               value={imageDesc}
               onChange={(e) => setImageDesc(e.target.value)}
-              placeholder="Or describe the image here..."
-              className="mt-3 w-full px-4 py-2 rounded-lg bg-black border border-[#262626] outline-none transition-colors text-sm"
+              placeholder="Describe the image here..."
+              className="mt-3 w-full px-3 sm:px-4 py-2 rounded-lg bg-black border border-[#262626] outline-none transition-colors text-sm"
             />
           </div>
         </section>
 
         {/* Video Length */}
         <section>
-          <h2 className="text-sm font-medium text-[#a3a3a3] mb-3">VIDEO LENGTH</h2>
-          <div className="flex flex-wrap gap-3">
+          <h2 className="text-xs sm:text-sm font-medium text-[#a3a3a3] mb-3">VIDEO LENGTH</h2>
+          <div className="flex flex-wrap gap-2 sm:gap-3">
             {videoLengths.map((length) => (
               <button
                 key={length.value}
                 onClick={() => setVideoLength(length.value)}
-                className={`px-6 py-3 rounded-lg border transition-all ${
+                className={`px-4 sm:px-6 py-2.5 sm:py-3 rounded-lg border transition-all text-sm ${
                   videoLength === length.value
                     ? 'bg-[#22c55e]/10 border-[#22c55e] text-[#22c55e]'
                     : 'bg-black border-[#262626] hover:border-[#404040]'
@@ -311,24 +311,24 @@ export default function GeneratePage() {
 
         {/* Content Goal */}
         <section>
-          <h2 className="text-sm font-medium text-[#a3a3a3] mb-3">CONTENT GOAL</h2>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+          <h2 className="text-xs sm:text-sm font-medium text-[#a3a3a3] mb-3">CONTENT GOAL</h2>
+          <div className="grid grid-cols-2 gap-2 sm:gap-3">
             {contentGoals.map((goal) => {
               const isSelected = contentGoal === goal.value;
               return (
                 <button
                   key={goal.value}
                   onClick={() => setContentGoal(goal.value)}
-                  className={`p-4 rounded-lg border transition-all text-left ${
+                  className={`p-3 sm:p-4 rounded-lg border transition-all text-left ${
                     isSelected
                       ? 'bg-[#22c55e]/10 border-[#22c55e]'
                       : 'bg-black border-[#262626] hover:border-[#404040]'
                   }`}
                 >
-                  <div className={`font-medium ${isSelected ? 'text-[#22c55e]' : ''}`}>
+                  <div className={`font-medium text-sm ${isSelected ? 'text-[#22c55e]' : ''}`}>
                     {goal.label}
                   </div>
-                  <div className="text-xs text-[#737373] mt-1">{goal.desc}</div>
+                  <div className="text-[10px] sm:text-xs text-[#737373] mt-0.5 sm:mt-1">{goal.desc}</div>
                 </button>
               );
             })}
@@ -339,17 +339,17 @@ export default function GeneratePage() {
         <button
           onClick={generateScripts}
           disabled={loading || isApiKeyMissing}
-          className="w-full py-4 bg-[#22c55e] hover:bg-[#16a34a] disabled:bg-[#262626] disabled:text-[#525252] text-black font-semibold rounded-lg transition-all flex items-center justify-center gap-2"
+          className="w-full py-3 sm:py-4 bg-[#22c55e] hover:bg-[#16a34a] disabled:bg-[#262626] disabled:text-[#525252] text-black font-semibold rounded-lg transition-all flex items-center justify-center gap-2 text-sm sm:text-base"
         >
           {loading ? (
             <>
-              <Loader2 className="animate-spin" size={20} />
-              Generating...
+              <Loader2 className="animate-spin" size={18} />
+              <span>Generating...</span>
             </>
           ) : (
             <>
-              <Sparkles size={20} />
-              Generate 5 Scripts
+              <Sparkles size={18} />
+              <span>Generate 5 Scripts</span>
             </>
           )}
         </button>
@@ -432,20 +432,20 @@ ${script.hashtags.highReach.join(' ')} ${script.hashtags.midReach.join(' ')} ${s
   };
 
   return (
-    <div className="p-8 max-w-4xl mx-auto">
+    <div className="p-4 sm:p-6 md:p-8 max-w-4xl mx-auto">
       <button
         onClick={onBack}
-        className="text-[#22c55e] hover:underline mb-6"
+        className="text-[#22c55e] hover:underline mb-4 sm:mb-6 text-sm"
       >
         ← Back to Generate
       </button>
 
-      <h1 className="text-2xl font-bold mb-2">Generated Scripts</h1>
-      <p className="text-[#737373] mb-8">
-        {niche} • {platform} • {topic.substring(0, 50)}...
+      <h1 className="text-xl sm:text-2xl font-bold mb-1">Generated Scripts</h1>
+      <p className="text-[#737373] text-sm mb-6 sm:mb-8">
+        {niche} • {platform} • {topic.substring(0, 30)}...
       </p>
 
-      <div className="space-y-6">
+      <div className="space-y-4 sm:space-y-6">
         {scripts.map((script, index) => (
           <div
             key={script.id}
@@ -453,44 +453,42 @@ ${script.hashtags.highReach.join(' ')} ${script.hashtags.midReach.join(' ')} ${s
             style={{ animationDelay: `${index * 0.1}s` }}
           >
             {/* Header */}
-            <div className="flex items-center justify-between mb-4 pb-4 border-b border-[#262626]">
-              <div className="flex items-center gap-3">
-                <span className="text-lg font-bold">#{script.id}</span>
-                <span className={`badge ${getViralityColor(script.viralityScore)}`}>
-                  Virality: {script.viralityScore}
-                </span>
-                <span className="platform-badge">{script.format}</span>
-              </div>
+            <div className="flex flex-wrap items-center gap-2 sm:gap-3 mb-3 sm:mb-4 pb-3 sm:pb-4 border-b border-[#262626]">
+              <span className="text-base sm:text-lg font-bold">#{script.id}</span>
+              <span className={`badge text-[10px] sm:text-xs ${getViralityColor(script.viralityScore)}`}>
+                Virality: {script.viralityScore}
+              </span>
+              <span className="platform-badge text-[10px] sm:text-xs">{script.format}</span>
             </div>
 
             {/* Hook */}
-            <div className="mb-4">
-              <h3 className="text-sm font-medium text-[#22c55e] mb-2">🎯 HOOK</h3>
-              <p className="text-lg font-semibold">{script.hook}</p>
+            <div className="mb-3 sm:mb-4">
+              <h3 className="text-xs sm:text-sm font-medium text-[#22c55e] mb-1 sm:mb-2">🎯 HOOK</h3>
+              <p className="text-base sm:text-lg font-semibold leading-snug">{script.hook}</p>
             </div>
 
             {/* Script */}
-            <div className="mb-4">
-              <h3 className="text-sm font-medium text-[#22c55e] mb-2">🎬 SCRIPT</h3>
-              <div className="space-y-4">
+            <div className="mb-3 sm:mb-4">
+              <h3 className="text-xs sm:text-sm font-medium text-[#22c55e] mb-2">🎬 SCRIPT</h3>
+              <div className="space-y-3 sm:space-y-4">
                 {script.script.scenes.map((scene, i) => (
-                  <div key={i} className="bg-black/50 rounded-lg p-4 border border-[#262626]">
-                    <div className="text-sm text-[#737373] mb-3">{scene.timeRange}</div>
-                    <div className="grid gap-2 text-sm">
+                  <div key={i} className="bg-black/50 rounded-lg p-3 sm:p-4 border border-[#262626]">
+                    <div className="text-xs text-[#737373] mb-2 sm:mb-3">{scene.timeRange}</div>
+                    <div className="grid gap-1.5 sm:gap-2 text-xs sm:text-sm">
                       <div className="flex gap-2">
-                        <span className="text-[#525252] min-w-[60px]">🎥 Film:</span>
+                        <span className="text-[#525252] shrink-0">🎥 Film:</span>
                         <span>{scene.film}</span>
                       </div>
                       <div className="flex gap-2">
-                        <span className="text-[#525252] min-w-[60px]">🗣 Say:</span>
+                        <span className="text-[#525252] shrink-0">🗣 Say:</span>
                         <span>{scene.say}</span>
                       </div>
                       <div className="flex gap-2">
-                        <span className="text-[#525252] min-w-[60px]">📝 Text:</span>
+                        <span className="text-[#525252] shrink-0">📝 Text:</span>
                         <span>{scene.textOverlay}</span>
                       </div>
                       <div className="flex gap-2">
-                        <span className="text-[#525252] min-w-[60px]">🎵 Sound:</span>
+                        <span className="text-[#525252] shrink-0">🎵 Sound:</span>
                         <span>{scene.sound}</span>
                       </div>
                     </div>
@@ -500,65 +498,59 @@ ${script.hashtags.highReach.join(' ')} ${script.hashtags.midReach.join(' ')} ${s
             </div>
 
             {/* Caption */}
-            <div className="mb-4">
-              <h3 className="text-sm font-medium text-[#22c55e] mb-2">✍️ CAPTION</h3>
-              <p className="text-sm">{script.caption}</p>
+            <div className="mb-3 sm:mb-4">
+              <h3 className="text-xs sm:text-sm font-medium text-[#22c55e] mb-1 sm:mb-2">✍️ CAPTION</h3>
+              <p className="text-xs sm:text-sm leading-relaxed">{script.caption}</p>
             </div>
 
             {/* Hashtags */}
-            <div className="mb-4">
-              <h3 className="text-sm font-medium text-[#22c55e] mb-2">#️⃣ HASHTAGS</h3>
-              <div className="space-y-1 text-sm">
-                <div>
-                  <span className="text-[#737373]">High Reach (1M+):</span>{' '}
-                  {script.hashtags.highReach.join(' ')}
+            <div className="mb-3 sm:mb-4">
+              <h3 className="text-xs sm:text-sm font-medium text-[#22c55e] mb-1 sm:mb-2">#️⃣ HASHTAGS</h3>
+              <div className="space-y-1 text-xs sm:text-sm">
+                <div className="break-words">
+                  <span className="text-[#737373]">High:</span>{' '}
+                  <span className="text-[#a3a3a3]">{script.hashtags.highReach.join(' ')}</span>
                 </div>
-                <div>
-                  <span className="text-[#737373]">Mid Reach (100K):</span>{' '}
-                  {script.hashtags.midReach.join(' ')}
+                <div className="break-words">
+                  <span className="text-[#737373]">Mid:</span>{' '}
+                  <span className="text-[#a3a3a3]">{script.hashtags.midReach.join(' ')}</span>
                 </div>
-                <div>
-                  <span className="text-[#737373]">Niche (&lt;100K):</span>{' '}
-                  {script.hashtags.niche.join(' ')}
+                <div className="break-words">
+                  <span className="text-[#737373]">Niche:</span>{' '}
+                  <span className="text-[#a3a3a3]">{script.hashtags.niche.join(' ')}</span>
                 </div>
               </div>
             </div>
 
             {/* Audio, Thumbnail, Post Time */}
-            <div className="flex flex-wrap gap-4 mb-4 text-sm">
-              <div>
-                <span className="text-[#737373]">🎵 Audio:</span> {script.audio}
-              </div>
-              <div>
-                <span className="text-[#737373]">🖼 Thumbnail:</span> {script.thumbnail}
-              </div>
-              <div>
-                <span className="text-[#737373]">⏰ Post Time:</span> {script.postTime}
-              </div>
+            <div className="flex flex-wrap gap-x-4 gap-y-1 mb-3 sm:mb-4 text-xs sm:text-sm">
+              <div><span className="text-[#737373]">🎵</span> {script.audio}</div>
+              <div><span className="text-[#737373]">🖼</span> {script.thumbnail}</div>
+              <div><span className="text-[#737373]">⏰</span> {script.postTime}</div>
             </div>
 
             {/* Why It Works */}
-            <div className="mb-4 pb-4 border-b border-[#262626]">
-              <div className="text-sm">
-                <span className="text-[#22c55e]">💡 Why This Works:</span> {script.whyItWorks}
+            <div className="mb-3 sm:mb-4 pb-3 sm:pb-4 border-b border-[#262626]">
+              <div className="text-xs sm:text-sm">
+                <span className="text-[#22c55e]">💡 Why:</span> {script.whyItWorks}
               </div>
             </div>
 
             {/* Actions */}
-            <div className="flex gap-3">
+            <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
               <button
                 onClick={() => copyAll(script)}
-                className="btn-secondary flex items-center gap-2"
+                className="btn-secondary flex items-center justify-center gap-2 text-xs sm:text-sm py-2.5 sm:py-2 px-3 sm:px-4"
               >
                 📋 Copy All
               </button>
               <button
                 onClick={() => goDeeper(script)}
                 disabled={loadingDeeper === script.id}
-                className="btn-secondary flex items-center gap-2"
+                className="btn-secondary flex items-center justify-center gap-2 text-xs sm:text-sm py-2.5 sm:py-2 px-3 sm:px-4"
               >
                 {loadingDeeper === script.id ? (
-                  <Loader2 className="animate-spin" size={16} />
+                  <Loader2 className="animate-spin" size={14} />
                 ) : (
                   '🎬 Go Deeper'
                 )}
@@ -567,25 +559,25 @@ ${script.hashtags.highReach.join(' ')} ${script.hashtags.midReach.join(' ')} ${s
 
             {/* Deeper Section */}
             {expandedCard === script.id && deeperScripts[script.id] && (
-              <div className="mt-4 p-4 bg-[#0f0f0f] rounded-lg border border-[#262626] animate-fadeIn">
-                <h3 className="text-lg font-semibold mb-4">🎬 Production Script</h3>
+              <div className="mt-4 p-3 sm:p-4 bg-[#0f0f0f] rounded-lg border border-[#262626] animate-fadeIn">
+                <h3 className="text-base sm:text-lg font-semibold mb-3 sm:mb-4">🎬 Production Script</h3>
                 {deeperScripts[script.id].production?.shots?.map((shot, i) => {
                   const shotObj = shot as { sceneNumber?: number; duration?: string; camera?: { angle?: string; movement?: string; lens?: string }; lighting?: string; audio?: string; broll?: string[]; textOverlay?: { text?: string; timing?: string }; transition?: string };
                   return (
-                  <div key={i} className="mb-4 p-3 bg-black rounded border border-[#262626]">
-                    <div className="flex justify-between items-center mb-2">
-                      <span className="font-medium">Scene {shotObj.sceneNumber}</span>
-                      <span className="text-sm text-[#737373]">{shotObj.duration}</span>
+                  <div key={i} className="mb-3 sm:mb-4 last:mb-0 p-2.5 sm:p-3 bg-black rounded border border-[#262626]">
+                    <div className="flex justify-between items-center mb-1.5 sm:mb-2">
+                      <span className="font-medium text-sm">Scene {shotObj.sceneNumber}</span>
+                      <span className="text-xs text-[#737373]">{shotObj.duration}</span>
                     </div>
-                    <div className="text-sm space-y-1">
-                      <div>📷 Camera: {shotObj.camera?.angle} • {shotObj.camera?.movement} • {shotObj.camera?.lens}</div>
-                      <div>💡 Lighting: {shotObj.lighting}</div>
-                      <div>🎵 Audio: {shotObj.audio}</div>
-                      {shotObj.broll && <div>🎬 B-roll: {shotObj.broll.join(', ')}</div>}
+                    <div className="text-xs sm:text-sm space-y-1">
+                      <div>📷 {shotObj.camera?.angle} • {shotObj.camera?.movement} • {shotObj.camera?.lens}</div>
+                      <div>💡 {shotObj.lighting}</div>
+                      <div>🎵 {shotObj.audio}</div>
+                      {shotObj.broll && <div>🎬 {shotObj.broll.join(', ')}</div>}
                       {shotObj.textOverlay && (
-                        <div>📝 Text: &quot;{shotObj.textOverlay.text}&quot; ({shotObj.textOverlay.timing})</div>
+                        <div>📝 "{shotObj.textOverlay.text}" ({shotObj.textOverlay.timing})</div>
                       )}
-                      {shotObj.transition && <div>➡️ Transition: {shotObj.transition}</div>}
+                      {shotObj.transition && <div>➡️ {shotObj.transition}</div>}
                     </div>
                   </div>
                 )})}
