@@ -139,8 +139,6 @@ export default function GeneratePage() {
     }
   };
 
-  }
-
   if (scripts.length > 0) {
     return (
       <ResultsPage
