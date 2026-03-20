@@ -4,15 +4,13 @@ import { getSettings, saveSettings } from '@/lib/storage';
 export async function GET() {
   try {
     const settings = getSettings();
-    const settingsWithMaskedKey = {
-      ...settings,
-      openai_api_key: settings?.openai_api_key
-        ? settings.openai_api_key.startsWith('sk-')
-          ? '✅ Configured'
-          : settings.openai_api_key.substring(0, 10) + '...'
-        : null
-    };
-    return NextResponse.json({ settings: settingsWithMaskedKey });
+    // API key status is always ✅ if env var is set, never expose the actual key
+    return NextResponse.json({
+      settings: {
+        ...settings,
+        openai_api_key: process.env.OPENAI_API_KEY ? '✅ Backend Configured' : null
+      }
+    });
   } catch (error) {
     console.error('Error fetching settings:', error);
     return NextResponse.json(
@@ -25,10 +23,10 @@ export async function GET() {
 export async function PUT(request: NextRequest) {
   try {
     const body = await request.json();
-    const { openai_api_key, default_niche, default_platform, country } = body;
+    const { default_niche, default_platform, country } = body;
 
+    // NOTE: openai_api_key is NEVER saved from frontend — only .env.local is used
     const updates: Record<string, unknown> = {};
-    if (openai_api_key !== undefined) updates.openai_api_key = openai_api_key;
     if (default_niche !== undefined) updates.default_niche = default_niche;
     if (default_platform !== undefined) updates.default_platform = default_platform;
     if (country !== undefined) updates.country = country;

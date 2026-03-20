@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 import { Loader2, Sparkles, Instagram, Youtube, Music, Facebook, Linkedin, Twitter, Camera } from 'lucide-react';
 
@@ -62,7 +61,6 @@ const contentGoals = [
 ];
 
 export default function GeneratePage() {
-  const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [scripts, setScripts] = useState<ScriptOutput[]>([]);
 
@@ -76,31 +74,16 @@ export default function GeneratePage() {
   const [videoLength, setVideoLength] = useState('30s');
   const [contentGoal, setContentGoal] = useState('engagement');
 
-  const [settings, setSettings] = useState<{ openai_api_key: string | null; default_niche: string; default_platform: string; country: string } | null>(null);
-  const [checkingSettings, setCheckingSettings] = useState(true);
-
   useEffect(() => {
-    checkSettings();
+    // Load default preferences only (API key is backend-only, never checked in frontend)
+    fetch('/api/settings')
+      .then(res => res.json())
+      .then(data => {
+        if (data.settings?.default_niche) setNiche(data.settings.default_niche);
+        if (data.settings?.default_platform) setSelectedPlatforms([data.settings.default_platform]);
+      })
+      .catch(console.error);
   }, []);
-
-  const checkSettings = async () => {
-    try {
-      const res = await fetch('/api/settings');
-      const data = await res.json();
-      setSettings(data.settings);
-
-      if (data.settings?.default_niche) {
-        setNiche(data.settings.default_niche);
-      }
-      if (data.settings?.default_platform) {
-        setSelectedPlatforms([data.settings.default_platform]);
-      }
-    } catch (error) {
-      console.error('Error fetching settings:', error);
-    } finally {
-      setCheckingSettings(false);
-    }
-  };
 
   const togglePlatform = (value: string) => {
     if (selectedPlatforms.includes(value)) {
@@ -156,12 +139,6 @@ export default function GeneratePage() {
     }
   };
 
-  if (checkingSettings) {
-    return (
-      <div className="p-8 flex items-center justify-center">
-        <Loader2 className="animate-spin text-[#22c55e]" size={32} />
-      </div>
-    );
   }
 
   if (scripts.length > 0) {
@@ -177,7 +154,7 @@ export default function GeneratePage() {
     );
   }
 
-  const isApiKeyMissing = !settings?.openai_api_key || settings.openai_api_key === '❌ Missing';
+  const isApiKeyMissing = false;
 
   return (
     <div className="p-4 sm:p-6 md:p-8 max-w-3xl mx-auto">
@@ -185,14 +162,7 @@ export default function GeneratePage() {
         <div className="bg-yellow-500/10 border border-yellow-500/20 rounded-lg p-4 mb-6 flex items-start gap-3">
           <div className="text-yellow-500 shrink-0">⚠️</div>
           <p className="text-sm">
-            Add your OpenAI API key in{' '}
-            <span
-              onClick={() => router.push('/settings')}
-              className="text-[#22c55e] cursor-pointer hover:underline"
-            >
-              Settings
-            </span>{' '}
-            to start generating
+            API key not configured. Please contact the admin.
           </p>
         </div>
       )}

@@ -2,10 +2,9 @@
 
 import { useState, useEffect } from 'react';
 import { toast } from 'sonner';
-import { Save, Check, X, Loader2 } from 'lucide-react';
+import { Save, Check, Loader2, Lock } from 'lucide-react';
 
 interface Settings {
-  openai_api_key: string | null;
   default_niche: string;
   default_platform: string;
   country: string;
@@ -39,12 +38,10 @@ const countries = [
 
 export default function SettingsPage() {
   const [settings, setSettings] = useState<Settings>({
-    openai_api_key: null,
     default_niche: 'Motivation',
     default_platform: 'instagram-reels',
     country: 'US',
   });
-  const [apiKey, setApiKey] = useState('');
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
 
@@ -57,7 +54,11 @@ export default function SettingsPage() {
       const res = await fetch('/api/settings');
       const data = await res.json();
       if (data.settings) {
-        setSettings(data.settings);
+        setSettings({
+          default_niche: data.settings.default_niche || 'Motivation',
+          default_platform: data.settings.default_platform || 'instagram-reels',
+          country: data.settings.country || 'US',
+        });
       }
     } catch (error) {
       console.error('Error fetching settings:', error);
@@ -73,7 +74,6 @@ export default function SettingsPage() {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          openai_api_key: apiKey || undefined,
           default_niche: settings.default_niche,
           default_platform: settings.default_platform,
           country: settings.country,
@@ -81,8 +81,7 @@ export default function SettingsPage() {
       });
 
       if (res.ok) {
-        toast.success('Settings saved successfully');
-        setApiKey('');
+        toast.success('Settings saved');
         fetchSettings();
       } else {
         toast.error('Failed to save settings');
@@ -103,81 +102,39 @@ export default function SettingsPage() {
     );
   }
 
-  const isConfigured = settings.openai_api_key && settings.openai_api_key !== '❌ Missing' && settings.openai_api_key !== 'user_will_add_this';
-
   return (
-    <div className="p-8 max-w-2xl mx-auto">
-      <h1 className="text-2xl font-bold mb-6">Settings</h1>
+    <div className="p-4 sm:p-6 md:p-8 max-w-2xl mx-auto">
+      <h1 className="text-xl sm:text-2xl font-bold mb-6">Settings</h1>
 
-      {/* API Key Status Banner */}
-      <div className={`p-4 rounded-lg mb-8 flex items-center justify-between ${
-        isConfigured
-          ? 'bg-green-500/10 border border-green-500/20'
-          : 'bg-red-500/10 border border-red-500/20'
-      }`}>
-        <div className="flex items-center gap-3">
-          {isConfigured ? (
-            <Check className="text-green-500" size={24} />
-          ) : (
-            <X className="text-red-500" size={24} />
-          )}
+      {/* API Key Status — backend only, never visible */}
+      <div className="card mb-6 bg-gradient-to-r from-green-500/5 to-emerald-500/5 border-green-500/20">
+        <div className="flex items-center gap-3 mb-3">
+          <div className="w-10 h-10 rounded-full bg-green-500/10 flex items-center justify-center">
+            <Lock className="text-green-500" size={20} />
+          </div>
           <div>
-            <p className="font-medium">
-              {isConfigured ? '✅ Connected' : '❌ Missing'}
-            </p>
-            <p className="text-sm text-[#737373]">
-              {isConfigured
-                ? 'OpenAI API key is configured'
-                : 'Add your OpenAI API key to start generating'}
-            </p>
+            <p className="font-semibold text-green-500">API Key Protected</p>
+            <p className="text-xs text-[#737373] mt-0.5">Stored securely in server environment — never exposed to frontend</p>
           </div>
         </div>
-      </div>
-
-      {/* OpenAI API Key */}
-      <div className="card mb-6">
-        <h2 className="text-lg font-semibold mb-4">OpenAI API Key</h2>
-        <p className="text-sm text-[#737373] mb-4">
-          Get your API key from{' '}
-          <a
-            href="https://platform.openai.com/api-keys"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-[#22c55e] hover:underline"
-          >
-            platform.openai.com
-          </a>
-        </p>
-        <div className="flex gap-3">
-          <input
-            type="password"
-            value={apiKey}
-            onChange={(e) => setApiKey(e.target.value)}
-            placeholder={isConfigured ? 'Leave empty to keep current' : 'sk-...'}
-            className="flex-1 px-4 py-3 rounded-lg bg-black border border-[#262626] focus:border-[#22c55e] outline-none transition-colors"
-          />
-          <button
-            onClick={saveSettings}
-            disabled={saving}
-            className="btn-primary flex items-center gap-2"
-          >
-            {saving ? <Loader2 className="animate-spin" size={18} /> : <Save size={18} />}
-            Save
-          </button>
+        <div className="flex items-center gap-2 text-xs text-[#737373]">
+          <Check className="text-green-500" size={14} />
+          <span>Backend-only • Not in code • Not in GitHub • Not visible to anyone</span>
         </div>
       </div>
 
       {/* Default Preferences */}
       <div className="card">
-        <h2 className="text-lg font-semibold mb-4">Default Preferences</h2>
+        <h2 className="text-base sm:text-lg font-semibold mb-4">Default Preferences</h2>
+        <p className="text-xs sm:text-sm text-[#737373] mb-4">These defaults will be pre-selected when you open the generator.</p>
 
         <div className="space-y-4">
           <div>
-            <label className="block text-sm text-[#a3a3a3] mb-2">Default Niche</label>
+            <label className="block text-xs sm:text-sm text-[#a3a3a3] mb-2">Default Niche</label>
             <select
               value={settings.default_niche}
               onChange={(e) => setSettings({ ...settings, default_niche: e.target.value })}
-              className="w-full px-4 py-3 rounded-lg bg-black border border-[#262626] outline-none transition-colors"
+              className="w-full px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg bg-black border border-[#262626] outline-none transition-colors text-sm"
             >
               {niches.map((niche) => (
                 <option key={niche} value={niche}>{niche}</option>
@@ -186,11 +143,11 @@ export default function SettingsPage() {
           </div>
 
           <div>
-            <label className="block text-sm text-[#a3a3a3] mb-2">Default Platform</label>
+            <label className="block text-xs sm:text-sm text-[#a3a3a3] mb-2">Default Platform</label>
             <select
               value={settings.default_platform}
               onChange={(e) => setSettings({ ...settings, default_platform: e.target.value })}
-              className="w-full px-4 py-3 rounded-lg bg-black border border-[#262626] outline-none transition-colors"
+              className="w-full px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg bg-black border border-[#262626] outline-none transition-colors text-sm"
             >
               {platforms.map((platform) => (
                 <option key={platform.value} value={platform.value}>{platform.label}</option>
@@ -199,11 +156,11 @@ export default function SettingsPage() {
           </div>
 
           <div>
-            <label className="block text-sm text-[#a3a3a3] mb-2">Country</label>
+            <label className="block text-xs sm:text-sm text-[#a3a3a3] mb-2">Country</label>
             <select
               value={settings.country}
               onChange={(e) => setSettings({ ...settings, country: e.target.value })}
-              className="w-full px-4 py-3 rounded-lg bg-black border border-[#262626] outline-none transition-colors"
+              className="w-full px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg bg-black border border-[#262626] outline-none transition-colors text-sm"
             >
               {countries.map((country) => (
                 <option key={country.value} value={country.value}>{country.label}</option>
@@ -211,6 +168,15 @@ export default function SettingsPage() {
             </select>
           </div>
         </div>
+
+        <button
+          onClick={saveSettings}
+          disabled={saving}
+          className="w-full mt-6 py-3 bg-[#22c55e] hover:bg-[#16a34a] disabled:bg-[#262626] disabled:text-[#525252] text-black font-semibold rounded-lg transition-all flex items-center justify-center gap-2 text-sm"
+        >
+          {saving ? <Loader2 className="animate-spin" size={18} /> : <Save size={18} />}
+          Save Preferences
+        </button>
       </div>
     </div>
   );

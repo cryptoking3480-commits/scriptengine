@@ -1,4 +1,5 @@
 // Client-side storage using localStorage (works on Vercel serverless)
+// NOTE: API keys are NEVER stored here — only in server-side .env.local
 
 export interface Script {
   id: string;
@@ -11,18 +12,7 @@ export interface Script {
   createdAt: string;
 }
 
-export interface ApiKey {
-  id: string;
-  key: string;
-  label: string;
-  createdAt: string;
-  lastUsed: string | null;
-  requestCount: number;
-  active: boolean;
-}
-
 export interface Settings {
-  openai_api_key: string | null;
   default_niche: string;
   default_platform: string;
   country: string;
@@ -30,16 +20,15 @@ export interface Settings {
 
 const SETTINGS_KEY = 'scriptengine_settings';
 const SCRIPTS_KEY = 'scriptengine_scripts';
-const API_KEYS_KEY = 'scriptengine_api_keys';
 
-// Settings
+// Settings (no API key — that stays in server .env only)
 export function getSettings(): Settings {
   if (typeof window === 'undefined') {
-    return { openai_api_key: null, default_niche: 'Motivation', default_platform: 'instagram-reels', country: 'US' };
+    return { default_niche: 'Motivation', default_platform: 'instagram-reels', country: 'US' };
   }
   const stored = localStorage.getItem(SETTINGS_KEY);
   if (stored) return JSON.parse(stored);
-  return { openai_api_key: null, default_niche: 'Motivation', default_platform: 'instagram-reels', country: 'US' };
+  return { default_niche: 'Motivation', default_platform: 'instagram-reels', country: 'US' };
 }
 
 export function saveSettings(settings: Partial<Settings>): Settings {
@@ -64,7 +53,6 @@ export function saveScript(script: Omit<Script, 'id' | 'createdAt'>): Script {
     createdAt: new Date().toISOString(),
   };
   scripts.unshift(newScript);
-  // Keep last 100
   const trimmed = scripts.slice(0, 100);
   localStorage.setItem(SCRIPTS_KEY, JSON.stringify(trimmed));
   return newScript;
@@ -77,40 +65,4 @@ export function getScriptById(id: string): Script | undefined {
 export function deleteScript(id: string): void {
   const scripts = getScripts().filter(s => s.id !== id);
   localStorage.setItem(SCRIPTS_KEY, JSON.stringify(scripts));
-}
-
-// API Keys
-export function getApiKeys(): ApiKey[] {
-  if (typeof window === 'undefined') return [];
-  const stored = localStorage.getItem(API_KEYS_KEY);
-  return stored ? JSON.parse(stored) : [];
-}
-
-export function saveApiKey(apiKey: Omit<ApiKey, 'id' | 'createdAt' | 'lastUsed' | 'requestCount' | 'active'>): ApiKey {
-  const keys = getApiKeys();
-  const newKey: ApiKey = {
-    ...apiKey,
-    id: Date.now().toString(),
-    createdAt: new Date().toISOString(),
-    lastUsed: null,
-    requestCount: 0,
-    active: true,
-  };
-  keys.push(newKey);
-  localStorage.setItem(API_KEYS_KEY, JSON.stringify(keys));
-  return newKey;
-}
-
-export function updateApiKey(id: string, updates: Partial<ApiKey>): ApiKey | null {
-  const keys = getApiKeys();
-  const idx = keys.findIndex(k => k.id === id);
-  if (idx === -1) return null;
-  keys[idx] = { ...keys[idx], ...updates };
-  localStorage.setItem(API_KEYS_KEY, JSON.stringify(keys));
-  return keys[idx];
-}
-
-export function deleteApiKey(id: string): void {
-  const keys = getApiKeys().filter(k => k.id !== id);
-  localStorage.setItem(API_KEYS_KEY, JSON.stringify(keys));
 }
