@@ -275,7 +275,7 @@ export default function GeneratePage() {
         <section>
           <h2 className="text-xs sm:text-sm font-medium text-[#a3a3a3] mb-3">UPLOAD IMAGE (OPTIONAL)</h2>
           <div className="border-2 border-dashed border-[#262626] rounded-lg p-4 sm:p-8 text-center hover:border-[#404040] transition-colors">
-            <Camera className="mx-auto text-[#525252] mb-2 sm:mb-3" size={24} className="sm:w-8 sm:h-8" />
+            <Camera className="mx-auto text-[#525252] mb-2 sm:mb-3 w-6 h-6 sm:w-8 sm:h-8" />
             <p className="text-xs sm:text-sm text-[#737373]">
               Describe product/service for better script (optional)
             </p>
@@ -575,7 +575,7 @@ ${script.hashtags.highReach.join(' ')} ${script.hashtags.midReach.join(' ')} ${s
                       <div>🎵 {shotObj.audio}</div>
                       {shotObj.broll && <div>🎬 {shotObj.broll.join(', ')}</div>}
                       {shotObj.textOverlay && (
-                        <div>📝 "{shotObj.textOverlay.text}" ({shotObj.textOverlay.timing})</div>
+                        <div>📝 &ldquo;{shotObj.textOverlay.text}&rdquo; ({shotObj.textOverlay.timing})</div>
                       )}
                       {shotObj.transition && <div>➡️ {shotObj.transition}</div>}
                     </div>
